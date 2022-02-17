@@ -69,10 +69,10 @@ export class CustomerComponent implements OnInit {
         Validators.required,
         Validators.maxLength(50)
       ]],
-      email: ['',[
-        Validators.required,
-        Validators.email
-      ]],
+      emailGroup: this.fb.group({
+        email: ['',[Validators.required,Validators.email]],
+        confirmEmail: ['', [Validators.required]]
+      }),
       phone: '',
       notification: 'email',
       rating: [null, ratingRange(1,5)],
@@ -133,7 +133,7 @@ export class CustomerComponent implements OnInit {
   }
 
   get email(){
-    return this.customerForm.get('email');
+    return this.customerForm.get('emailGroup.email');
   }
 
   get sendCatalog(){
@@ -146,5 +146,9 @@ export class CustomerComponent implements OnInit {
 
   get rating(){
     return this.customerForm.get('rating');
+  }
+
+  get confirmEmail(){
+    return this.customerForm.get('emailGroup.confirmEmail');
   }
 }
