@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 // import { NgForm } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators'
 
 import { Customer } from './customer';
 
@@ -68,6 +69,11 @@ export class CustomerComponent implements OnInit {
 
   customerForm!: FormGroup;
   customer = new Customer();
+  emailMessage: string = '';
+  private validationMessages: {[key: string]: string} = {
+    required: 'Please enter your email address.',
+    email: 'Please enter a valid email address.'
+  }
 
   constructor(private fb: FormBuilder){}
 
@@ -101,6 +107,16 @@ export class CustomerComponent implements OnInit {
     //   email: new FormControl(),
     //   sendCatalog: new FormControl(true),
     // });
+
+    this.notifictation?.valueChanges.subscribe(
+      value => this.setNotification(value)
+    );
+
+    this.email?.valueChanges.pipe(
+      debounceTime(1000)
+    ).subscribe({
+      next: value => this.setMessage(this.email)
+    });
   }
 
   populateTestData(): void{
@@ -128,6 +144,16 @@ export class CustomerComponent implements OnInit {
     console.log('Saved: ' + JSON.stringify(this.customerForm));
   }
 
+  setMessage(c: AbstractControl | null): void{
+    if(c == null) return;
+    this.emailMessage = '';
+    if((c.touched || c.dirty) && c.errors){
+      this.emailMessage = Object.keys(c.errors).map(
+        key => this.validationMessages[key]
+      ).join(' ');
+    }
+  }
+
   setNotification(notifyVia: string): void{
     if(notifyVia == 'text'){
       // this.customerForm.get('phone')?.setValidators(Validators.required);
@@ -148,6 +174,10 @@ export class CustomerComponent implements OnInit {
 
   get email(){
     return this.customerForm.get('emailGroup.email');
+  }
+
+  get notifictation(){
+    return this.customerForm.get('notification');
   }
 
   get sendCatalog(){
