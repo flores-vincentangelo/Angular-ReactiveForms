@@ -60,7 +60,7 @@
                   type="email"
                   placeholder="Email (required)"
                   formControlName="email"
-                  [ngClass]="{'is-invalid': (email?.touched || email?.dirty) && !email?.valid }" />
+                  [ngClass]="{'is-invalid':  emailGroup?.errors || ((email?.touched || email?.dirty) && !email?.valid) }" />
             <span class="invalid-feedback">
               <span *ngIf="email?.errors?.required">
                 Please enter your email address.
@@ -82,10 +82,13 @@
                 id="confirmEmailId"
                 placeholder="Confirm Email (required)"
                 formControlName="confirmEmail"
-                [ngClass]="{'is-invalid': (confirmEmail?.touched || confirmEmail?.dirty) && !confirmEmail?.valid}">
+                [ngClass]="{'is-invalid':  emailGroup?.errors || ((confirmEmail?.touched || confirmEmail?.dirty) && !confirmEmail?.valid )}">
               <span class="invalid-feedback">
                 <span *ngIf="confirmEmail?.errors?.required">
                   Please confirm your email address.
+                </span>
+                <span *ngIf="emailGroup?.errors?.match">
+                  The confirmation does not match the email address. Please match emails.
                 </span>
               </span>
             </div>
