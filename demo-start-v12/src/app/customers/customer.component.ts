@@ -130,11 +130,11 @@ export class CustomerComponent implements OnInit {
 
   setNotification(notifyVia: string): void{
     if(notifyVia == 'text'){
+      // this.customerForm.get('phone')?.setValidators(Validators.required);
       this.phone?.setValidators(Validators.required);
     } else {
       this.phone?.clearValidators();
     }
-
     this.phone?.updateValueAndValidity();
   }
 
