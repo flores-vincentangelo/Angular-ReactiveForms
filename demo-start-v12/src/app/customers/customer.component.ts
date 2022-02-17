@@ -1,8 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 // import { NgForm } from '@angular/forms';
 
 import { Customer } from './customer';
+
+//to make a validator function with parameters wrap the validator function into a vaidator factory
+//and transform the validator function into an arrow function
+function ratingRange(min: number, max: number): ValidatorFn{
+
+  return (c: AbstractControl): { [key: string]: boolean } | null => {
+    //if the statement within the if statemetn is true, it means there is an error and the validation is triggered
+    if(c.value !== null && (isNaN(c.value) || c.value < min || c.value > max)){
+      return {'range': true};
+    }
+    //return null if no error
+    return null;
+  }
+
+}
 
 @Component({
   selector: 'app-customer',
@@ -29,7 +44,8 @@ export class CustomerComponent implements OnInit {
   //
   // customerForm = new FormGroup({
   //   firstName: new FormControl('Vincent Angelo',[
-  //   Validators.required
+  //   Validators.required,
+  //    Validators.minLength(3)
   // ]),
   //   lastName: new FormControl('Flores'),
   //   email: new FormControl('vincentflores88@gmail.com'),
@@ -45,9 +61,21 @@ export class CustomerComponent implements OnInit {
     //form builder: initializing the form
     //
     this.customerForm = this.fb.group({
-      firstName: '',
-      lastName: '',
-      email: '',
+      firstName: ['', [
+        Validators.required,
+        Validators.minLength(3)
+      ]],
+      lastName: ['', [
+        Validators.required,
+        Validators.maxLength(50)
+      ]],
+      email: ['',[
+        Validators.required,
+        Validators.email
+      ]],
+      phone: '',
+      notification: 'email',
+      rating: [null, ratingRange(1,5)],
       sendCatalog: true
     });
 
@@ -76,13 +104,24 @@ export class CustomerComponent implements OnInit {
     //
     this.customerForm.patchValue({
       firstName: 'Gerard Angelo',
-      lastName: 'Araneta'
+      lastName: 'Araneta',
+      email: 'vincentflores88@tgmail.com'
     });
   }
 
   save(): void {
     console.log(this.customerForm);
     console.log('Saved: ' + JSON.stringify(this.customerForm));
+  }
+
+  setNotification(notifyVia: string): void{
+    if(notifyVia == 'text'){
+      this.phone?.setValidators(Validators.required);
+    } else {
+      this.phone?.clearValidators();
+    }
+
+    this.phone?.updateValueAndValidity();
   }
 
   get firstName(){
@@ -99,5 +138,13 @@ export class CustomerComponent implements OnInit {
 
   get sendCatalog(){
     return this.customerForm.get('sendCatalog');
+  }
+
+  get phone(){
+    return this.customerForm.get('phone');
+  }
+
+  get rating(){
+    return this.customerForm.get('rating');
   }
 }
