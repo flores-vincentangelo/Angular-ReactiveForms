@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 // import { NgForm } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators'
 
@@ -96,7 +96,9 @@ export class CustomerComponent implements OnInit {
       phone: '',
       notification: 'email',
       rating: [null, ratingRange(1,5)],
-      sendCatalog: true
+      sendCatalog: true,
+      addresses: new FormArray([ this.buildAddress() ])
+
     });
 
     //Reactive Form: initializing the form
@@ -117,6 +119,17 @@ export class CustomerComponent implements OnInit {
     ).subscribe({
       next: value => this.setMessage(this.email)
     });
+  }
+
+  buildAddress(): FormGroup{
+    return new FormGroup({
+      addressType: new FormControl('home'),
+      street1: new FormControl(''),
+      street2: new FormControl(''),
+      city: new FormControl(''),
+      state: new FormControl(''),
+      zip: new FormControl('')
+    })
   }
 
   populateTestData(): void{
@@ -164,39 +177,43 @@ export class CustomerComponent implements OnInit {
     this.phone?.updateValueAndValidity();
   }
 
-  get firstName(){
-    return this.customerForm.get('firstName');
+  get firstName(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('firstName');
   }
 
-  get lastName(){
-    return this.customerForm.get('lastName');
+  get lastName(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('lastName');
   }
 
-  get email(){
-    return this.customerForm.get('emailGroup.email');
+  get email(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('emailGroup.email');
   }
 
-  get notifictation(){
-    return this.customerForm.get('notification');
+  get notifictation(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('notification');
   }
 
-  get sendCatalog(){
-    return this.customerForm.get('sendCatalog');
+  get sendCatalog(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('sendCatalog');
   }
 
-  get phone(){
-    return this.customerForm.get('phone');
+  get phone(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('phone');
   }
 
-  get rating(){
-    return this.customerForm.get('rating');
+  get rating(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('rating');
   }
 
-  get confirmEmail(){
-    return this.customerForm.get('emailGroup.confirmEmail');
+  get confirmEmail(): AbstractControl{
+    return <AbstractControl>this.customerForm.get('emailGroup.confirmEmail');
   }
 
-  get emailGroup(){
-    return this.customerForm.get('emailGroup');
+  get emailGroup(): AbstractControl{
+    return this.customerForm.get('emailGroup') as AbstractControl;
+  }
+
+  get addresses(): FormArray{
+    return this.customerForm.get('addresses') as FormArray;
   }
 }
