@@ -121,14 +121,18 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  addAddress(): void{
+    this.addresses.push(this.buildAddress());
+  }
+
   buildAddress(): FormGroup{
     return new FormGroup({
       addressType: new FormControl('home'),
-      street1: new FormControl(''),
+      street1: new FormControl('',[Validators.required]),
       street2: new FormControl(''),
-      city: new FormControl(''),
-      state: new FormControl(''),
-      zip: new FormControl('')
+      city: new FormControl('',[Validators.required]),
+      state: new FormControl('',[Validators.required]),
+      zip: new FormControl('',[Validators.required])
     })
   }
 
@@ -177,6 +181,8 @@ export class CustomerComponent implements OnInit {
     this.phone?.updateValueAndValidity();
   }
 
+  /* getters */
+
   get firstName(): AbstractControl{
     return <AbstractControl>this.customerForm.get('firstName');
   }
@@ -210,7 +216,7 @@ export class CustomerComponent implements OnInit {
   }
 
   get emailGroup(): AbstractControl{
-    return this.customerForm.get('emailGroup') as AbstractControl;
+    return this.customerForm.get('emailGroup') as FormGroup;
   }
 
   get addresses(): FormArray{
