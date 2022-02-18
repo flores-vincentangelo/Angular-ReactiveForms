@@ -24,7 +24,7 @@ export class ProductService {
 
   getProduct(id: number): Observable<Product> {
     if (id === 0) {
-      // return of(this.initializeProduct());
+      return of(this.initializeProduct());
       // return this.initializeProduct() as unknown as Observable<Product>;
     }
     const url = `${this.productsUrl}/${id}`;
